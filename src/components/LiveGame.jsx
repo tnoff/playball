@@ -13,6 +13,7 @@ import StrikeZone from './StrikeZone.js';
 
 import { get } from '../config.js';
 import { selectGameStatus, selectLineScore, selectTeams } from '../features/games.js';
+import { GRID_HEIGHT, GRID_WIDTH } from '../strikeZone.js';
 import { resetTitle, setTitle } from '../screen.js';
 import useKey from '../hooks/useKey.js';
 
@@ -83,10 +84,10 @@ function LiveGame()  {
             <element top={0} height={2}>
               <Matchup />
             </element>
-            <element top={3} height={9} width={24}>
+            <element top={3} height={GRID_HEIGHT} width={GRID_WIDTH * 2}>
               <StrikeZone />
             </element>
-            <element top={13}>
+            <element top={4 + GRID_HEIGHT}>
               <AtBat />
             </element>
           </element>
