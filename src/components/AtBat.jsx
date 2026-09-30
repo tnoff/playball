@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectCurrentPlay } from '../features/games.js';
 import { getPitchColor, getPitchEvents, getPitchMarker } from '../strikeZone.js';
+import { formatHitData } from '../utils.js';
 
 function AtBat() {
   const currentPlay = useSelector(selectCurrentPlay);
@@ -53,7 +54,12 @@ function AtBat() {
         if (event.details?.type?.description) {
           line += event.details.type.description;
         }
-        if (!event.details?.isInPlay) {
+        if (event.details?.isInPlay) {
+          const hit = formatHitData(event.hitData);
+          if (hit) {
+            line += ` (${hit})`;
+          }
+        } else {
           line += `{|} ${event.count.balls}-${event.count.strikes}`;
         }
       } else {
