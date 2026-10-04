@@ -1,0 +1,44 @@
+name: Publish image
+
+# Builds the fork's own image and pushes it to the public OCIR repository, so
+# it can be pulled on personal devices with no login. Fork-only file; upstream's
+# Docker Hub pipeline (publish-docker.yml) is gated off for this repo.
+#
+# Multi-platform (amd64 + arm64) in one manifest list. The default runner is
+# arm64, so the amd64 leg is emulated under QEMU and is the slow part (npm ci).
+#
+# single_tag: only a moving `latest` is pushed. Nothing ever pulls a specific
+# past build of a personal-device image, so a per-commit tag is pure
+# accumulation. This is the whole retention policy: one tag, overwritten.
+#
+# The registry, namespace and repo name are Actions variables, not secrets, and
+# have to stay that way: GitHub blanks a job output that contains secret
+# material, which would empty docker-push's `image` output.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# A newer push supersedes an in-flight build; only the latest matters.
+concurrency:
+  group: publish-image
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  push:
+    name: Build and push
+    uses: tnoff/github-workflows/.github/workflows/docker-push.yml@a5e07a72bb76a983408e840c3cfcffa27cdbf738  # docker-push-v1.1.0
+    with:
+      registry: ${{ vars.OCI_REGISTRY }}
+      namespace: ${{ vars.OCI_NAMESPACE }}
+      repo_name: ${{ vars.OCI_REPO_NAME }}
+      platform: linux/amd64,linux/arm64
+      single_tag: true
+    secrets:
+      oci_username: ${{ secrets.OCI_USERNAME }}
+      oci_token: ${{ secrets.OCI_TOKEN }}
