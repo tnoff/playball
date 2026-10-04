@@ -9,6 +9,11 @@ on:
 
 jobs:
   build-and-push:
+    # Upstream's release pipeline: needs paaatrick's Docker Hub / npm
+    # credentials, which this fork does not have. Gated so it concludes
+    # `skipped` here instead of failing on every push. The fork publishes its
+    # own image from publish-image.yml.
+    if: github.repository == 'paaatrick/playball'
     name: Build and Publish Docker Image
     runs-on: ubuntu-latest
 

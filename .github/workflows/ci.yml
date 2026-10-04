@@ -1,0 +1,23 @@
+name: CI
+
+# Fleet-only pull-request checks. Upstream's test.yml (build + npm test) is left
+# untouched and is the required status check; this file only adds what the
+# fleet requires of any repo that pins a workflow from tnoff/github-workflows.
+
+on:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Catches a `uses:` whose inputs or secrets no longer match the pinned callee.
+  # That mismatch fails the calling workflow at STARTUP -- no job, no check, no
+  # workflow_run event -- so nothing else would show it.
+  contracts:
+    name: Workflow contracts
+    uses: tnoff/github-workflows/.github/workflows/check-workflow-contracts.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # check-workflow-contracts-v1.0.0

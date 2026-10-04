@@ -11,6 +11,10 @@ permissions:
 
 jobs:
   publish:
+    # Upstream's release pipeline: publishes the `playball` package to npm via
+    # a trusted-publisher setup that belongs to paaatrick. This fork has no such
+    # grant, so a v* tag here would fail. Gated so it concludes `skipped`.
+    if: github.repository == 'paaatrick/playball'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
