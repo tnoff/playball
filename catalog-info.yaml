@@ -1,0 +1,26 @@
+# Backstage catalog descriptor. Discovered automatically -- the portal's GitHub
+# provider reads catalog-info.yaml from the default branch of every repo the
+# tnoff-backstage App can see. github.com/project-slug is derived by the
+# portal from the location this file was fetched from.
+#
+# Fork-only file: upstream (paaatrick/playball) has no such file, so adding it
+# cannot conflict when upstream is merged into main.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: playball
+  description: >-
+    Fork of paaatrick/playball: watch MLB games from the terminal. Published as
+    a multi-platform (amd64 + arm64) image in a public OCIR repository so it can
+    be pulled on personal devices; run locally, nothing is deployed to the
+    cluster.
+  tags:
+    - nodejs
+    - cli
+    - fork
+spec:
+  type: library
+  owner: group:default/admin
+  lifecycle: production
+  dependsOn:
+    - component:default/github-workflows
