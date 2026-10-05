@@ -37,7 +37,38 @@ jobs:
   # so the two builds cannot diverge. allow_fork_prs stays at its default (true):
   # the repo is public and the build has no secrets.
   #
-  # Add to the required status checks only after it has run green.
+  # Required through the `result` job below, not by its own name.
   docker-build-check:
     name: Build and scan image
     uses: tnoff/github-workflows/.github/workflows/docker-build-check.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # docker-build-check-v1.0.0
+
+  # The stable name for the branch ruleset to require, as in the rest of the
+  # fleet: the leg names above come from the callees and can change with a pin
+  # bump, and a required check that stops reporting blocks every PR. None of the
+  # three jobs is conditional, so this just needs all of them.
+  #
+  # `build-and-test` stays a separate required check: it lives in upstream's
+  # test.yml, which is left untouched so merging upstream stays conflict-free, so
+  # this workflow cannot `needs` it.
+  result:
+    name: CI result
+    if: always()
+    needs: [contracts, secrets, docker-build-check]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Summarise
+        run: |
+          echo "contracts:          ${{ needs.contracts.result }}"
+          echo "secrets:            ${{ needs.secrets.result }}"
+          echo "docker-build-check: ${{ needs.docker-build-check.result }}"
+
+      - name: Fail if any job failed
+        if: >-
+          needs.contracts.result == 'failure' || needs.contracts.result == 'cancelled' ||
+          needs.secrets.result == 'failure' || needs.secrets.result == 'cancelled' ||
+          needs.docker-build-check.result == 'failure' || needs.docker-build-check.result == 'cancelled'
+        run: |
+          echo "::error::One or more CI jobs did not pass."
+          exit 1
