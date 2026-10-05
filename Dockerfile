@@ -1,5 +1,5 @@
 # Based on https://docs.docker.com/guides/nodejs/containerize/
-ARG NODE_VERSION=24.11.1-alpine
+ARG NODE_VERSION=24.21.0-alpine
 FROM node:${NODE_VERSION} AS base
 
 # Set working directory
@@ -59,7 +59,7 @@ RUN chown -R nodejs:nodejs /app
 # ========================================
 # Production Stage
 # ========================================
-ARG NODE_VERSION=24.11.1-alpine
+ARG NODE_VERSION=24.21.0-alpine
 FROM node:${NODE_VERSION} AS production
 
 # Set working directory
