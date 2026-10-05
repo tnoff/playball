@@ -15,6 +15,11 @@
       "description": "All GitHub Actions bumps in one PR.",
       "matchManagers": ["github-actions"],
       "groupName": "github actions"
+    },
+    {
+      "description": "Stay below ESLint 9. This repo uses .eslintrc.json; ESLint 10 dropped eslintrc support entirely and 9 deprecates it, so both need a flat-config migration first. Remove this rule once that is done.",
+      "matchPackageNames": ["eslint"],
+      "allowedVersions": "<9"
     }
   ]
 }
