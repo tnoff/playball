@@ -21,3 +21,23 @@ jobs:
   contracts:
     name: Workflow contracts
     uses: tnoff/github-workflows/.github/workflows/check-workflow-contracts.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # check-workflow-contracts-v1.0.0
+
+  # TruffleHog over the PR's source. Upstream's test.yml does not scan.
+  secrets:
+    name: Scan for secrets
+    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # trufflehog-v1.0.0
+
+  # Builds the image WITHOUT pushing and runs TruffleHog on it, so a secret
+  # introduced in a PR is caught before merge rather than after publish-image.yml
+  # has already pushed it to the public OCIR repo.
+  #
+  # Default platform (linux/arm64) runs natively on an arm64 runner, so no QEMU
+  # and a fast check. Only the arm64 variant is scanned, same as the post-push
+  # scan. build_args must stay identical to publish-image.yml's (currently none)
+  # so the two builds cannot diverge. allow_fork_prs stays at its default (true):
+  # the repo is public and the build has no secrets.
+  #
+  # Add to the required status checks only after it has run green.
+  docker-build-check:
+    name: Build and scan image
+    uses: tnoff/github-workflows/.github/workflows/docker-build-check.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # docker-build-check-v1.0.0
