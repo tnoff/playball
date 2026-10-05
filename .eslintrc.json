@@ -22,7 +22,8 @@
         "linebreak-style": ["error", "unix"],
         "quotes": ["error", "single"],
         "semi": ["error", "always"],
-        "no-console": "warn"
+        "no-console": "warn",
+        "react/no-unknown-property": "off"
     },
     "settings": {
       "react": {

@@ -4,15 +4,17 @@ on:
   push:
     branches:
       - 'main'
-  pull_request:
-    branches:
-      - 'main'
+  # Called from ci.yml on pull requests, so build-and-test reports through the
+  # `CI result` aggregate. This replaces upstream's own `pull_request` trigger
+  # (the one deliberate divergence from upstream in this file); a second trigger
+  # would run the suite twice per PR.
+  workflow_call:
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
         with:
