@@ -3,18 +3,37 @@
   "extends": [
     "github>tnoff/github-workflows//renovate/default-github"
   ],
-  "enabledManagers": ["github-actions", "npm", "dockerfile", "custom.regex"],
+  "enabledManagers": [
+    "github-actions",
+    "npm",
+    "dockerfile",
+    "custom.regex"
+  ],
   "packageRules": [
     {
       "description": "Safe in-range npm updates (minor, patch, lockfile) in one PR. Majors are deliberately left out so each can be reviewed or rejected on its own.",
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "groupName": "npm non-major"
     },
     {
       "description": "All GitHub Actions bumps in one PR.",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github actions"
+    },
+    {
+      "description": "Stay below ESLint 9. This repo uses .eslintrc.json; ESLint 10 dropped eslintrc support entirely and 9 deprecates it, so both need a flat-config migration first. Remove this rule once that is done.",
+      "matchPackageNames": [
+        "eslint"
+      ],
+      "allowedVersions": "<9"
     }
   ]
 }
