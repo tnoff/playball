@@ -3,5 +3,18 @@
   "extends": [
     "github>tnoff/github-workflows//renovate/default-github"
   ],
-  "enabledManagers": ["github-actions", "npm", "dockerfile", "custom.regex"]
+  "enabledManagers": ["github-actions", "npm", "dockerfile", "custom.regex"],
+  "packageRules": [
+    {
+      "description": "Safe in-range npm updates (minor, patch, lockfile) in one PR. Majors are deliberately left out so each can be reviewed or rejected on its own.",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm non-major"
+    },
+    {
+      "description": "All GitHub Actions bumps in one PR.",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions"
+    }
+  ]
 }

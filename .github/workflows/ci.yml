@@ -1,8 +1,9 @@
 name: CI
 
-# Fleet-only pull-request checks. Upstream's test.yml (build + npm test) is left
-# untouched and is the required status check; this file only adds what the
-# fleet requires of any repo that pins a workflow from tnoff/github-workflows.
+# Pull-request checks. Upstream's test.yml (build + npm test) is called from
+# here as the `test` job; the rest is what the fleet requires of any repo that
+# pins a workflow from tnoff/github-workflows. `CI result` is the one required
+# status check.
 
 on:
   pull_request:
@@ -15,9 +16,64 @@ permissions:
   contents: read
 
 jobs:
+  # Upstream's build + npm test, called rather than triggered on its own so it
+  # is part of the `CI result` aggregate. See the note in test.yml.
+  test:
+    name: Build and test
+    uses: ./.github/workflows/test.yml
+
   # Catches a `uses:` whose inputs or secrets no longer match the pinned callee.
   # That mismatch fails the calling workflow at STARTUP -- no job, no check, no
   # workflow_run event -- so nothing else would show it.
   contracts:
     name: Workflow contracts
     uses: tnoff/github-workflows/.github/workflows/check-workflow-contracts.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # check-workflow-contracts-v1.0.0
+
+  # TruffleHog over the PR's source. Upstream's test.yml does not scan.
+  secrets:
+    name: Scan for secrets
+    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # trufflehog-v1.0.0
+
+  # Builds the image WITHOUT pushing and runs TruffleHog on it, so a secret
+  # introduced in a PR is caught before merge rather than after publish-image.yml
+  # has already pushed it to the public OCIR repo.
+  #
+  # Default platform (linux/arm64) runs natively on an arm64 runner, so no QEMU
+  # and a fast check. Only the arm64 variant is scanned, same as the post-push
+  # scan. build_args must stay identical to publish-image.yml's (currently none)
+  # so the two builds cannot diverge. allow_fork_prs stays at its default (true):
+  # the repo is public and the build has no secrets.
+  #
+  # Required through the `result` job below, not by its own name.
+  docker-build-check:
+    name: Build and scan image
+    uses: tnoff/github-workflows/.github/workflows/docker-build-check.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # docker-build-check-v1.0.0
+
+  # The stable name for the branch ruleset to require, as in the rest of the
+  # fleet: the leg names above come from the callees and can change with a pin
+  # bump, and a required check that stops reporting blocks every PR. None of the
+  # jobs is conditional, so this just needs all of them.
+  result:
+    name: CI result
+    if: always()
+    needs: [test, contracts, secrets, docker-build-check]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Summarise
+        run: |
+          echo "test:               ${{ needs.test.result }}"
+          echo "contracts:          ${{ needs.contracts.result }}"
+          echo "secrets:            ${{ needs.secrets.result }}"
+          echo "docker-build-check: ${{ needs.docker-build-check.result }}"
+
+      - name: Fail if any job failed
+        if: >-
+          needs.test.result == 'failure' || needs.test.result == 'cancelled' ||
+          needs.contracts.result == 'failure' || needs.contracts.result == 'cancelled' ||
+          needs.secrets.result == 'failure' || needs.secrets.result == 'cancelled' ||
+          needs.docker-build-check.result == 'failure' || needs.docker-build-check.result == 'cancelled'
+        run: |
+          echo "::error::One or more CI jobs did not pass."
+          exit 1
