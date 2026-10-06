@@ -1,10 +1,18 @@
 import { get } from './config.js';
 
-const FAVORITES = get('favorites');
+/**
+ * Check if a game involves any favorited team.
+ * @param {object} game
+ * @param {string[]} favorites - favorited team abbreviations
+ */
+export function gameHasFavoriteTeam(game, favorites) {
+  return favorites.includes(game.teams.away.team.abbreviation) ||
+         favorites.includes(game.teams.home.team.abbreviation);
+}
 
 export function teamFavoriteStar(team) {
   const style = get('color.favorite-star') + '-fg';
-  if (FAVORITES.includes(team.abbreviation)) {
+  if (get('favorites').includes(team.abbreviation)) {
     return `{${style}}★{/${style}} `;
   }
   return '';
@@ -15,11 +23,7 @@ export function teamFavoriteStar(team) {
  * @returns {string} '51' for WBC, '1' for MLB
  */
 export function getSportId() {
-  // ENV override takes precedence
-  const envSport = process.env.PLAYBALL_SPORT?.toLowerCase();
-  const sport = envSport || get('sport') || 'mlb';
-
-  return sport === 'wbc' ? '51' : '1';
+  return getSport() === 'wbc' ? '51' : '1';
 }
 
 /**
@@ -27,8 +31,7 @@ export function getSportId() {
  * @returns {string} 'mlb' or 'wbc'
  */
 export function getSport() {
-  const envSport = process.env.PLAYBALL_SPORT?.toLowerCase();
-  return envSport || get('sport') || 'mlb';
+  return get('sport')?.toLowerCase() || 'mlb';
 }
 
 /**

@@ -110,6 +110,10 @@ const schema = {
     },
     default: []
   },
+  'sort-by-favorites': {
+    type: 'boolean',
+    default: false,
+  },
   'title': {
     type: 'boolean',
     default: false,
@@ -131,10 +135,10 @@ const config = new Conf({
   schema,
 });
 
-function serialize(value) {
+export function serialize(value) {
   if (value && Array.isArray(value)) {
     return value.join(',');
-  } 
+  }
   return value;
 }
 
@@ -149,8 +153,16 @@ function deserialize(key, value) {
   return value;
 }
 
+function envVarName(key) {
+  return 'PLAYBALL_' + key.toUpperCase().replace(/[.-]/g, '_');
+}
+
 export function get(key) {
-  return serialize(config.get(key));
+  const envValue = process.env[envVarName(key)];
+  if (envValue != null) {
+    return deserialize(key, envValue);
+  }
+  return config.get(key);
 }
 
 export function set(key, value) {
