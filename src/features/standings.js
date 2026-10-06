@@ -1,6 +1,5 @@
 import axios from 'axios';
-import reduxjsToolkit from '@reduxjs/toolkit';
-const { createAsyncThunk, createSlice, createSelector } = reduxjsToolkit;
+import { createAsyncThunk, createSlice, createSelector } from '@reduxjs/toolkit';
 import { getSport } from '../utils.js';
 
 const initialState = {
