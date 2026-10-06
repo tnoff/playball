@@ -1,6 +1,6 @@
 {
   "name": "playball",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Watch MLB games from the comfort of your terminal",
   "keywords": [
     "MLB",
@@ -17,7 +17,7 @@
     "start": "babel src --out-dir dist --watch",
     "prepublishOnly": "npm run build",
     "react-devtools": "react-devtools",
-    "test": "node test/gameStatus.test.js && node test/boxScore.test.js && node test/strikeZone.test.js && node test/utils.test.js && node test/cli.test.js && node test/app.test.js"
+    "test": "node --test"
   },
   "bin": {
     "playball": "./bin/playball.js"
