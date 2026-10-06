@@ -1,0 +1,49 @@
+name: Upstream check
+
+# Fails when paaatrick/playball main has commits newer than the SHA recorded in
+# .upstream-sync. notify-failure.yml turns the failed scheduled run into a
+# Discord message. Fork-only file: upstream has no such workflow or marker, so
+# it cannot conflict when upstream is merged.
+#
+# A marker file is used instead of comparing branches because this repo only
+# allows squash/rebase merges, so a sync PR never makes upstream's commits
+# ancestors of main and a branch comparison would report "behind" forever.
+#
+# To clear a failure: merge upstream/main into a branch, resolve conflicts, set
+# .upstream-sync to the upstream SHA you merged, and open a PR (as in #45).
+
+on:
+  schedule:
+    - cron: '17 15 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  behind:
+    name: Behind upstream?
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Compare .upstream-sync with paaatrick/playball main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          synced=$(tr -d '[:space:]' < .upstream-sync)
+          behind=$(gh api "repos/paaatrick/playball/compare/${synced}...main" --jq .ahead_by)
+          echo "Last synced upstream commit: ${synced}"
+          echo "paaatrick/playball main is ${behind} commit(s) ahead of it."
+          if [ "$behind" -gt 0 ]; then
+            {
+              echo "### Fork is behind upstream by ${behind} commit(s)"
+              echo
+              gh api "repos/paaatrick/playball/compare/${synced}...main" \
+                --jq '.commits[] | "- `\(.sha[0:7])` \(.commit.message | split("\n")[0])"'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "::error::paaatrick/playball main is ${behind} commit(s) ahead of .upstream-sync"
+            exit 1
+          fi
