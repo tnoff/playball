@@ -42,7 +42,7 @@
     "@reduxjs/toolkit": "^2.13.0",
     "axios": "^1.0.0",
     "blessed": "^0.1.81",
-    "commander": "^11.0.0",
+    "commander": "^15.0.0",
     "conf": "^15.0.0",
     "date-fns": "^4.1.0",
     "figlet": "^1.10.0",
