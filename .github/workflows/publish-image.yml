@@ -1,8 +1,10 @@
 name: Publish image
 
 # Builds the fork's own image and pushes it to the public OCIR repository, so
-# it can be pulled on personal devices with no login. Fork-only file; upstream's
-# Docker Hub pipeline (publish-docker.yml) is gated off for this repo.
+# it can be pulled on personal devices with no login. Fork-only file. Upstream's
+# own publish workflows (Docker Hub, npm) were removed from this fork: they need
+# credentials that belong to paaatrick/playball. If upstream edits either file,
+# a merge shows a modify/delete conflict; resolve it by keeping the deletion.
 #
 # Multi-platform (amd64 + arm64) in one manifest list. The default runner is
 # arm64, so the amd64 leg is emulated under QEMU and is the slow part (npm ci).
