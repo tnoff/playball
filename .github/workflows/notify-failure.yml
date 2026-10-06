@@ -2,9 +2,6 @@
 #
 # One file covers every workflow in this repo, including ones added later.
 # workflow_run only fires for a copy of this file on the DEFAULT branch.
-#
-# Upstream's publish workflows are gated to paaatrick/playball, so on this fork
-# they conclude `skipped`, not `failure`, and do not notify.
 name: Notify on failure
 
 on:
