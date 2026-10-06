@@ -1,5 +1,4 @@
-import reduxjsToolkit from '@reduxjs/toolkit';
-const { configureStore } = reduxjsToolkit;
+import { configureStore } from '@reduxjs/toolkit';
 
 import schedule from '../features/schedule.js';
 import games from '../features/games.js';

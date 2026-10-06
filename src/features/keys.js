@@ -1,5 +1,4 @@
-import reduxjsToolkit from '@reduxjs/toolkit';
-const { createSlice } = reduxjsToolkit;
+import { createSlice } from '@reduxjs/toolkit';
 import screen from '../screen.js';
 
 export const keysSlice = createSlice({

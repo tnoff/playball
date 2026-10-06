@@ -1,6 +1,5 @@
 import axios from 'axios';
-import reduxjsToolkit from '@reduxjs/toolkit';
-const { createAsyncThunk, createSlice, createSelector } = reduxjsToolkit;
+import { createAsyncThunk, createSlice, createSelector } from '@reduxjs/toolkit';
 import jsonpatch from 'json-patch';
 import { UTCDate } from '@date-fns/utc';
 import { addSeconds, differenceInSeconds, format } from 'date-fns';
