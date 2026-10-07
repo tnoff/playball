@@ -47,12 +47,13 @@
     "date-fns": "^4.1.0",
     "figlet": "^1.10.0",
     "json-patch": "^0.7.0",
+    "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "raf": "^3.4.1",
     "react": "^19.0.0",
-    "react-blessed": "^0.7.2",
     "react-devtools-core": "^8.0.0",
-    "react-redux": "^7.2.6",
+    "react-reconciler": "^0.34.0",
+    "react-redux": "^9.3.0",
     "redux": "^5.0.0",
     "update-notifier": "^7.0.0",
     "winston": "^3.7.2"
@@ -63,7 +64,6 @@
     "@babel/node": "^8.0.0",
     "@babel/preset-env": "^8.0.0",
     "@babel/preset-react": "^8.0.0",
-    "babel-plugin-module-resolver": "^5.0.0",
     "eslint": "^8.12.0",
     "eslint-plugin-react": "^7.29.4",
     "react-devtools": "^8.0.0",
@@ -86,16 +86,6 @@
         "@babel/preset-react",
         {
           "runtime": "classic"
-        }
-      ]
-    ],
-    "plugins": [
-      [
-        "module-resolver",
-        {
-          "alias": {
-            "react-redux": "react-redux/lib/alternate-renderers.js"
-          }
         }
       ]
     ]
