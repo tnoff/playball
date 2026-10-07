@@ -15,10 +15,10 @@ export default async function startInterface(options) {
     log.error('UNCAUGHT EXCEPTION\n' + JSON.stringify(error) + '\n' + error.stack);
   });
 
-  // Must be imported dynamically because the import seems to have
-  // side effects that block other CLI commands from exiting
-  const reactBlessed = await import('react-blessed');
-  reactBlessed.render(
+  // Imported dynamically so other CLI commands don't pay for (or get held
+  // open by) loading the renderer
+  const { render } = await import('./renderer/index.js');
+  render(
     <Provider store={store}>
       <App replayId={options.replay} defaultDate={options.date} />
     </Provider>, 

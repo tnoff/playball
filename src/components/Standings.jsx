@@ -49,7 +49,9 @@ function Standings() {
   const standings = useSelector(selectData);
   const sport = getSport();
 
-  useEffect(() => dispatch(fetchStandings()), []);
+  useEffect(() => {
+    dispatch(fetchStandings());
+  }, []);
 
   if (!standings) {
     return <element />;
