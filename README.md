@@ -25,9 +25,11 @@ $ playball
 ```
 
 ### Docker
-Don't have Node.js installed? You can run via Docker instead.
+Don't have Node.js installed? You can run via Docker instead. The image is
+published to a public registry (no login needed) for both `linux/amd64` and
+`linux/arm64`, and `latest` is the only tag.
 ```
-$ docker run -it --rm paaatrick0/playball
+$ docker run -it --rm iad.ocir.io/tnoff/playball
 ```
 
 > [!TIP]
@@ -35,15 +37,15 @@ $ docker run -it --rm paaatrick0/playball
 > 
 > For Central Time use:
 > ```
-> $ docker run -it --rm -e TZ=America/Chicago paaatrick0/playball
+> $ docker run -it --rm -e TZ=America/Chicago iad.ocir.io/tnoff/playball
 > ```
 > For Mountain Time use:
 > ```
-> $ docker run -it --rm -e TZ=America/Denver paaatrick0/playball
+> $ docker run -it --rm -e TZ=America/Denver iad.ocir.io/tnoff/playball
 > ```
 > For Pacific Time use:
 > ```
-> $ docker run -it --rm -e TZ=America/Los_Angeles paaatrick0/playball
+> $ docker run -it --rm -e TZ=America/Los_Angeles iad.ocir.io/tnoff/playball
 > ```
 > For other timezones see the list of [TZ database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
@@ -92,7 +94,7 @@ playball config sport mlb
 When running via Docker:
 
 ```shell
-docker run -it --rm -e PLAYBALL_SPORT=wbc paaatrick0/playball
+docker run -it --rm -e PLAYBALL_SPORT=wbc iad.ocir.io/tnoff/playball
 ```
 
 ### Configuration
@@ -148,7 +150,7 @@ PLAYBALL_LIVE_DELAY=30 playball
 This is especially useful with Docker, since a `--rm` container has no way to persist `playball config` changes between runs:
 
 ```shell
-docker run -it --rm -e PLAYBALL_LIVE_DELAY=30 paaatrick0/playball
+docker run -it --rm -e PLAYBALL_LIVE_DELAY=30 iad.ocir.io/tnoff/playball
 ```
 
 This table summarizes the available settings:
@@ -175,7 +177,7 @@ key | env variable | description | default | allowed values
 
 ### Development
 ```
-git clone https://github.com/paaatrick/playball.git
+git clone https://github.com/tnoff/playball.git
 cd playball
 npm install
 npm start
