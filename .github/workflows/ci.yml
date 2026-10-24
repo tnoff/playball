@@ -32,7 +32,7 @@ jobs:
   # TruffleHog over the PR's source. Upstream's test.yml does not scan.
   secrets:
     name: Scan for secrets
-    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@adea087c43d56fd13d5b1abf2d5f2ba3e695784d  # trufflehog-v1.0.0
+    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@b7790887a768e86127e2b6a29ed06631c947972f  # trufflehog-v1.0.1
 
   # Builds the image WITHOUT pushing and runs TruffleHog on it, so a secret
   # introduced in a PR is caught before merge rather than after publish-image.yml
