@@ -34,6 +34,19 @@ jobs:
     name: Scan for secrets
     uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@b7790887a768e86127e2b6a29ed06631c947972f  # trufflehog-v1.0.1
 
+  # GitHub's semantic SAST (taint/dataflow analysis) over the JavaScript source:
+  # the Node counterpart to bandit in the Python repos. Results go to the Security
+  # tab's code-scanning alerts. The reusable workflow needs security-events: write,
+  # which the caller must grant explicitly.
+  codeql:
+    name: CodeQL
+    permissions:
+      contents: read
+      security-events: write
+    uses: tnoff/github-workflows/.github/workflows/codeql.yml@7eb9a163564f2fc8edb4f1b8c38d47c2a8475884  # codeql-v1.0.3
+    with:
+      languages: '["javascript-typescript"]'
+
   # Builds the image WITHOUT pushing and runs TruffleHog on it, so a secret
   # introduced in a PR is caught before merge rather than after publish-image.yml
   # has already pushed it to the public OCIR repo.
@@ -56,7 +69,7 @@ jobs:
   result:
     name: CI result
     if: always()
-    needs: [test, contracts, secrets, docker-build-check]
+    needs: [test, contracts, secrets, codeql, docker-build-check]
     runs-on: ubuntu-26.04
     permissions:
       contents: read
@@ -66,6 +79,7 @@ jobs:
           echo "test:               ${{ needs.test.result }}"
           echo "contracts:          ${{ needs.contracts.result }}"
           echo "secrets:            ${{ needs.secrets.result }}"
+          echo "codeql:             ${{ needs.codeql.result }}"
           echo "docker-build-check: ${{ needs.docker-build-check.result }}"
 
       - name: Fail if any job failed
@@ -73,6 +87,7 @@ jobs:
           needs.test.result == 'failure' || needs.test.result == 'cancelled' ||
           needs.contracts.result == 'failure' || needs.contracts.result == 'cancelled' ||
           needs.secrets.result == 'failure' || needs.secrets.result == 'cancelled' ||
+          needs.codeql.result == 'failure' || needs.codeql.result == 'cancelled' ||
           needs.docker-build-check.result == 'failure' || needs.docker-build-check.result == 'cancelled'
         run: |
           echo "::error::One or more CI jobs did not pass."
