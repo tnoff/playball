@@ -5,11 +5,6 @@ FROM node:${NODE_VERSION} AS base
 # Set working directory
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 -G nodejs && \
-    chown -R nodejs:nodejs /app
-
 # ========================================
 # Dependencies Stage
 # ========================================
@@ -22,9 +17,6 @@ COPY package*.json ./
 RUN --mount=type=cache,target=/root/.npm,sharing=locked \
     npm ci --omit=dev && \
     npm cache clean --force
-
-# Set proper ownership
-RUN chown -R nodejs:nodejs /app
 
 # ========================================
 # Build Dependencies Stage
@@ -39,22 +31,16 @@ RUN --mount=type=cache,target=/root/.npm,sharing=locked \
     npm ci --no-audit --no-fund && \
     npm cache clean --force
 
-# Set permissions
-RUN chown -R nodejs:nodejs /app
-
 # ========================================
 # Build Stage
 # ========================================
 FROM build-deps AS build
 
 # Copy only necessary files for building (respects .dockerignore)
-COPY --chown=nodejs:nodejs . .
+COPY . .
 
 # Build the application
 RUN npm run build
-
-# Set proper ownership
-RUN chown -R nodejs:nodejs /app
 
 # ========================================
 # Production Stage
