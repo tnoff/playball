@@ -1,5 +1,5 @@
 # Based on https://docs.docker.com/guides/nodejs/containerize/
-ARG NODE_VERSION=24.22.1-alpine
+ARG NODE_VERSION=24.22.2-alpine
 FROM node:${NODE_VERSION} AS base
 
 # Set working directory
@@ -47,7 +47,7 @@ RUN npm run build
 # ========================================
 # Production Stage
 # ========================================
-ARG NODE_VERSION=24.22.1-alpine
+ARG NODE_VERSION=24.22.2-alpine
 FROM node:${NODE_VERSION} AS production
 
 # Set working directory
