@@ -32,7 +32,7 @@ jobs:
   # TruffleHog over the PR's source. Upstream's test.yml does not scan.
   secrets:
     name: Scan for secrets
-    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@717d50d682ec44c1e8a7b73e18f12a90735cc4d8  # trufflehog-v1.0.2
+    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@b56606873ed2a7885779f3106a6beaeda4a30e28  # trufflehog-v1.0.3
 
   # GitHub's semantic SAST (taint/dataflow analysis) over the JavaScript source:
   # the Node counterpart to bandit in the Python repos. Results go to the Security
